@@ -1,0 +1,314 @@
+<div class="gmc-pair">
+
+  {{#unless configured}}
+    <p class="notification warning">
+      Najpierw ustaw <strong>Adres relaya</strong> w ustawieniach modułu.
+    </p>
+  {{/unless}}
+
+  {{#if error}}<p class="notification error">{{error}}</p>{{/if}}
+  {{#if notice}}<p class="notification info">{{notice}}</p>{{/if}}
+
+  <h3>Połączenie z relayem</h3>
+
+  {{#if connected}}
+    <div class="gmc-pair__row">
+      <span class="gmc-pair__label">Token główny</span>
+      <code class="gmc-pair__id">{{tokenMasked}}</code>
+      <button type="button" data-action="copy" data-copy="{{relayUrl}}" data-tooltip="Kopiuj adres relaya">
+        <i class="fa-solid fa-copy"></i>
+      </button>
+      <button type="button" data-action="rotateMaster">
+        <i class="fa-solid fa-rotate"></i> Nowy token
+      </button>
+    </div>
+  {{else}}
+    {{#if offline}}
+      <p class="notification warning">
+        Relay nie odpowiada pod <code>{{relayUrl}}</code>. Sprawdź, czy działa.
+      </p>
+    {{/if}}
+    {{#if staleToken}}
+      <p class="notification warning">
+        Zapisany token (<code>{{tokenMasked}}</code>) nie jest już akceptowany —
+        relay został zresetowany albo token wymieniono gdzie indziej.
+      </p>
+    {{/if}}
+    {{#if canAutoConnect}}
+      <p class="gmc-pair__hint">
+        Relay ma włączone <code>GMC_OPEN_CLAIM</code>, więc wydał kod sam —
+        nie trzeba niczego przepisywać.
+      </p>
+      <div class="gmc-pair__actions">
+        <button type="button" data-action="autoConnect">
+          <i class="fa-solid fa-plug"></i> Połącz z relayem
+        </button>
+      </div>
+      <details>
+        <summary class="gmc-pair__hint">Wpisać kod ręcznie</summary>
+        <div class="gmc-pair__row">
+          <input type="text" name="bootstrap" maxlength="6" placeholder="KOD"
+                 autocomplete="off" class="gmc-pair__bootstrap">
+          <button type="button" data-action="claimMaster">Połącz</button>
+        </div>
+      </details>
+    {{else if relayClaimed}}
+      <p class="notification warning">
+        Relay ma już token główny, więc nowego kodu startowego nie wyda — kod
+        z <code>bootstrap-code.txt</code> jest zużyty i niczego nie odblokuje.
+      </p>
+      <p class="gmc-pair__hint">
+        Token wymieniono gdzie indziej albo ta przeglądarka go zgubiła. Żeby
+        sparować od nowa, na maszynie z relayem: zatrzymaj <code>server.mjs</code>,
+        skasuj leżący obok <code>secrets.json</code> (a jeśli ustawiasz
+        <code>GMC_TOKEN</code> — wyczyść tę zmienną) i uruchom relay ponownie.
+        Wypisze świeży kod i zapisze go do <code>bootstrap-code.txt</code>.
+      </p>
+    {{else}}
+      <p class="gmc-pair__hint">
+        Kod znajdziesz w logu relaya albo w pliku <code>bootstrap-code.txt</code>
+        obok <code>server.mjs</code>. Relay nie wyda go przez sieć, chyba że
+        uruchomisz go z <code>GMC_OPEN_CLAIM=1</code> — a to należy robić tylko
+        w zaufanej sieci lokalnej.
+      </p>
+      <div class="gmc-pair__row">
+        <input type="text" name="bootstrap" maxlength="6" placeholder="KOD"
+               autocomplete="off" class="gmc-pair__bootstrap">
+        <button type="button" data-action="claimMaster" {{#unless configured}}disabled{{/unless}}>
+          Połącz
+        </button>
+      </div>
+    {{/if}}
+    {{#if hasToken}}
+      <div class="gmc-pair__actions">
+        <button type="button" data-action="clearToken">
+          <i class="fa-solid fa-eraser"></i> Wyczyść zapisany token
+        </button>
+      </div>
+      {{#if relayClaimed}}
+        <p class="gmc-pair__hint">
+          Wyczyszczenie zapomina token tylko w tej przeglądarce — relaya to nie
+          odblokuje.
+        </p>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+
+  {{#if connected}}
+    <hr>
+    <h3>Sparuj tablet</h3>
+
+    <div class="gmc-pair__row">
+      <label class="gmc-pair__label" for="gmc-pair-role">Do czego ten tablet</label>
+      <select name="pairRole" id="gmc-pair-role" class="gmc-pair__role">
+        <option value="console" {{#unless pairRoleViewer}}selected{{/unless}}>Konsola — odpala makra</option>
+        <option value="viewer" {{#if pairRoleViewer}}selected{{/if}}>Widz — tylko patrzy</option>
+      </select>
+    </div>
+    <p class="gmc-pair__hint">
+      {{#if pairRoleViewer}}
+        Widz widzi planszę i kto jest podłączony, ale żaden kafelek nic nie odpali —
+        taki tablet oddajesz graczowi.
+      {{else}}
+        Konsola może odpalić każde makro z planszy i zapisać jej układ —
+        to twój drugi ekran, nie tablet dla gracza.
+      {{/if}}
+      Rola jest przypisana do kodu, więc wybierz ją przed zeskanowaniem.
+    </p>
+
+    {{#if code}}
+      <p class="gmc-pair__hint">
+        Ten kod sparuje tablet jako <strong>{{codeRoleLabel}}</strong>.
+      </p>
+      {{#if qrUnreachable}}
+        <p class="notification warning">
+          Adres relaya (<code>{{relayUrl}}</code>) wskazuje na <em>to</em> urządzenie.
+          Kod zeskanuje się, ale tablet będzie szukał relaya u siebie i nic nie znajdzie.
+          Wpisz adres widoczny z sieci — np. <code>http://192.168.0.102:8765</code>.
+        </p>
+      {{/if}}
+      <div class="gmc-pair__qr {{#if codeIsViewer}}is-viewer{{/if}}">{{{qrSvg}}}</div>
+      <p class="gmc-pair__hint">
+        Zeskanuj kod tabletem albo wejdź na <code>{{relayUrl}}</code> i wpisz:
+      </p>
+      <div class="gmc-pair__row">
+        <p class="gmc-pair__code">{{code}}</p>
+        <button type="button" data-action="copy" data-copy="{{code}}" data-tooltip="Kopiuj kod">
+          <i class="fa-solid fa-copy"></i>
+        </button>
+      </div>
+
+      <div class="gmc-pair__row">
+        <input type="text" class="gmc-pair__link" value="{{pairUrl}}" readonly>
+        <button type="button" data-action="copy" data-copy="{{pairUrl}}" data-tooltip="Kopiuj gotowy link">
+          <i class="fa-solid fa-link"></i>
+        </button>
+      </div>
+      <p class="gmc-pair__hint">
+        Link paruje od razu po otwarciu — wyślij go na tablet, jeśli nie masz aparatu.
+      </p>
+
+      <p class="gmc-pair__hint">Kod jest jednorazowy i wygasa po {{expiresMinutes}} min.</p>
+    {{/if}}
+
+    <div class="gmc-pair__actions">
+      <button type="button" data-action="newCode">
+        <i class="fa-solid fa-rotate"></i> Nowy kod
+      </button>
+    </div>
+
+    <hr>
+
+    <h3>Sparowane urządzenia</h3>
+    {{#if devices.length}}
+      <ul class="gmc-pair__devices">
+        {{#each devices}}
+          <li data-device-id="{{this.id}}" class="{{#if this.isViewer}}is-viewer{{/if}}">
+            <span class="gmc-pair__name">{{this.name}}</span>
+            <span class="gmc-pair__id">{{this.id}}</span>
+            <select name="deviceRole" class="gmc-pair__role" aria-label="Rola tabletu">
+              <option value="console" {{#unless this.isViewer}}selected{{/unless}}>Konsola</option>
+              <option value="viewer" {{#if this.isViewer}}selected{{/if}}>Widz</option>
+            </select>
+            <button type="button" data-action="revoke" data-tooltip="Odłącz">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </li>
+        {{/each}}
+      </ul>
+      <p class="gmc-pair__hint">
+        Zmiana roli działa od razu — tablet dowiaduje się o niej sam, bez parowania
+        od nowa.{{#if hasViewer}} Widz zostaje podłączony i widzi planszę, ale nic nie odpali.{{/if}}
+      </p>
+    {{else}}
+      <p class="gmc-pair__hint">Nic jeszcze nie sparowane.</p>
+    {{/if}}
+
+    <hr>
+
+    <h3>Ostatnie akcje</h3>
+
+    {{#if logFailed}}
+      <p class="notification warning">
+        Relay nie oddał dziennika, więc poniższa lista nie jest aktualna —
+        to nie znaczy, że nic się nie działo.
+      </p>
+    {{/if}}
+
+    {{#if log.length}}
+      <ul class="gmc-pair__log">
+        {{#each log}}
+          <li class="is-{{this.status}}">
+            <span class="gmc-pair__when" title="{{this.exact}}">{{this.when}}</span>
+            <span class="gmc-pair__who" title="{{this.device}}">{{this.device}}</span>
+            <span class="gmc-pair__what {{#if this.unknownMacro}}gmc-pair__id{{/if}}"
+                  title="{{this.what}}">{{this.what}}</span>
+            {{#if this.statusLabel}}
+              <span class="gmc-pair__verdict">{{this.statusLabel}}</span>
+            {{/if}}
+            {{#if this.duration}}
+              <span class="gmc-pair__ms">{{this.duration}}</span>
+            {{/if}}
+            {{#if this.showDetail}}
+              <p class="gmc-pair__why" title="{{this.detail}}">{{this.detail}}</p>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+      {{#if logMore}}
+        <p class="gmc-pair__hint">
+          To najnowsze zdarzenia — relay pamięta ich {{logTotal}}.
+        </p>
+      {{/if}}
+    {{else}}
+      {{#unless logFailed}}
+        <p class="gmc-pair__hint">Nic jeszcze nie odpalono z tabletu.</p>
+      {{/unless}}
+    {{/if}}
+
+    <div class="gmc-pair__actions">
+      <button type="button" data-action="refreshLog">
+        <i class="fa-solid fa-rotate"></i> Odśwież dziennik
+      </button>
+    </div>
+  {{/if}}
+
+  <hr>
+
+  <h3>Plansze</h3>
+  <p class="gmc-pair__hint">
+    Tablet dostaje planszę pasującą do oglądanej sceny. Jeśli scena nie ma
+    własnej, spada na planszę systemu, a potem na domyślną — nigdy na pustą.
+    Teraz aktywna: <strong>{{activeBoardLabel}}</strong>.
+  </p>
+
+  <ul class="gmc-pair__boards">
+    {{#each boards}}
+      <li data-board-key="{{this.key}}" class="{{#if this.active}}is-active{{/if}}">
+        <span class="gmc-pair__name">{{this.label}}</span>
+        <span class="gmc-pair__id">{{this.groups}} gr. / {{this.items}} kaf.</span>
+        {{#if this.removable}}
+          <button type="button" data-action="boardDelete" data-tooltip="Usuń tę planszę">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        {{/if}}
+      </li>
+    {{/each}}
+  </ul>
+
+  {{#if canMakeSceneBoard}}
+    <div class="gmc-pair__actions">
+      <button type="button" data-action="boardForScene">
+        <i class="fa-solid fa-plus"></i> Osobna plansza dla „{{sceneBoardName}}”
+      </button>
+    </div>
+    <p class="gmc-pair__hint">
+      Skopiuje obecną planszę, żeby było od czego zacząć.
+    </p>
+  {{/if}}
+
+  <hr>
+
+  <h3>Kopia zapasowa plansz</h3>
+
+  <div class="gmc-pair__actions">
+    <button type="button" data-action="exportCopy" data-tooltip="Kopiuj wszystkie plansze jako JSON">
+      <i class="fa-solid fa-copy"></i> Kopiuj
+    </button>
+    <button type="button" data-action="exportFile" data-tooltip="Pobierz plik z planszami">
+      <i class="fa-solid fa-download"></i> Zapisz plik
+    </button>
+    <button type="button" data-action="importFile" data-tooltip="Wczytaj plik z planszami">
+      <i class="fa-solid fa-file-import"></i> Wczytaj plik
+    </button>
+  </div>
+  <input type="file" name="boardsFile" accept="application/json,.json" hidden>
+
+  <details>
+    <summary class="gmc-pair__hint">Wklej JSON ręcznie</summary>
+    <textarea name="boardsJson" rows="5" class="gmc-pair__json"
+              placeholder="Wklej tu zawartość pliku z planszami"></textarea>
+    <div class="gmc-pair__actions">
+      <button type="button" data-action="importPaste">
+        <i class="fa-solid fa-paste"></i> Importuj wklejone
+      </button>
+    </div>
+  </details>
+
+  {{#if hasBackup}}
+    <div class="gmc-pair__row">
+      <span class="gmc-pair__label">Poprzedni układ: {{backupWhen}} ({{backupBoards}} plansz)</span>
+      <button type="button" data-action="restorePrevious" data-tooltip="Cofnij ostatnią zmianę plansz">
+        <i class="fa-solid fa-clock-rotate-left"></i> Przywróć
+      </button>
+    </div>
+    {{#if backupReason}}
+      <p class="gmc-pair__hint">Zapisana przy: {{backupReason}}</p>
+    {{/if}}
+  {{else}}
+    <p class="gmc-pair__hint">
+      Kopii jeszcze nie ma — powstanie sama przy pierwszym zapisie plansz.
+    </p>
+  {{/if}}
+
+</div>

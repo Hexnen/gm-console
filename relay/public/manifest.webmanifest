@@ -1,0 +1,21 @@
+{
+  "name": "GM Console",
+  "short_name": "GM Console",
+  "description": "Macro console for the GM's tablet, bridged to Foundry VTT.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "orientation": "any",
+  "categories": ["utilities", "games"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

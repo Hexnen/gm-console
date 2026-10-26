@@ -1,0 +1,15 @@
+{
+  "GMCONSOLE.Settings.RelayUrl.Name": "Adres relaya",
+  "GMCONSOLE.Settings.RelayUrl.Hint": "Bazowy adres serwera gm-console, np. https://console.snieg.ovh albo http://192.168.0.102:8765. Puste = wyłączone.",
+  "GMCONSOLE.Settings.Enabled.Name": "Włącz połączenie z konsolą",
+  "GMCONSOLE.Settings.Enabled.Hint": "Podłącza tę sesję MG do relaya, żeby tablet mógł odpalać makra.",
+  "GMCONSOLE.Settings.Pairing.Name": "Parowanie tabletu",
+  "GMCONSOLE.Settings.Pairing.Label": "Sparuj tablet",
+  "GMCONSOLE.Settings.Pairing.Hint": "Pokaż kod QR do sparowania nowego urządzenia i zarządzaj już podłączonymi.",
+  "GMCONSOLE.Pairing.Title": "GM Console — parowanie tabletu",
+  "GMCONSOLE.Notify.TokenRejected": "GM Console: relay odrzucił ten token. Otwórz Parowanie tabletu i wpisz kod startowy z konsoli relaya jeszcze raz.",
+  "GMCONSOLE.Notify.NotMaster": "GM Console: to token urządzenia, nie token główny. Otwórz Parowanie tabletu i pobierz token główny.",
+  "GMCONSOLE.Notify.NoToken": "GM Console: adres relaya jest ustawiony, ale nie ma jeszcze tokenu. Otwórz Parowanie tabletu, żeby się połączyć.",
+  "GMCONSOLE.Notify.LayoutRejected": "GM Console: układ przysłany z tabletu był nieprawidłowy i nie został zapisany.",
+  "GMCONSOLE.Pairing.Copied": "Skopiowano do schowka."
+}

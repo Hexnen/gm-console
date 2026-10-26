@@ -1,0 +1,13 @@
+{"at":"2026-08-16T19:10:40.913Z","event":"fire","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn"}
+{"at":"2026-08-16T19:10:41.220Z","event":"result","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn","ok":true,"ms":307,"text":"ffdsfsd"}
+{"at":"2026-08-16T19:11:08.164Z","event":"fire","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn"}
+{"at":"2026-08-16T19:11:08.469Z","event":"result","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn","ok":true,"ms":305,"text":"ffdsfsd"}
+{"at":"2026-08-16T19:11:13.600Z","event":"fire","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn"}
+{"at":"2026-08-16T19:11:13.905Z","event":"result","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn","ok":true,"ms":305,"text":"ffdsfsd"}
+{"at":"2026-08-16T19:11:17.145Z","event":"fire","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn"}
+{"at":"2026-08-16T19:11:17.450Z","event":"result","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn","ok":true,"ms":305,"text":"ffdsfsd"}
+{"at":"2026-08-16T19:11:32.742Z","event":"fire","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn"}
+{"at":"2026-08-16T19:11:33.049Z","event":"result","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn","ok":true,"ms":307,"text":"ffdsfsd"}
+{"at":"2026-08-16T19:11:44.683Z","event":"fire","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn"}
+{"at":"2026-08-16T19:11:44.990Z","event":"result","deviceId":"c4e81782","device":"Tablet","role":"console","macroId":"3cZKEHxflLbFjbRn","ok":true,"ms":307,"text":"ffdsfsd"}
+{"at":"2026-08-17T06:18:18.925Z","event":"denied","deviceId":"c4e81782","device":"Tablet","role":"console","path":"/api/devices","need":null}

@@ -1,0 +1,15 @@
+{
+  "GMCONSOLE.Settings.RelayUrl.Name": "Relay URL",
+  "GMCONSOLE.Settings.RelayUrl.Hint": "Base URL of the gm-console relay, e.g. https://console.snieg.ovh or http://192.168.0.102:8765. Leave empty to disable.",
+  "GMCONSOLE.Settings.Enabled.Name": "Enable console link",
+  "GMCONSOLE.Settings.Enabled.Hint": "Connect this GM session to the relay so the tablet can fire macros.",
+  "GMCONSOLE.Settings.Pairing.Name": "Tablet pairing",
+  "GMCONSOLE.Settings.Pairing.Label": "Pair a tablet",
+  "GMCONSOLE.Settings.Pairing.Hint": "Show a QR code to pair a new device and manage the ones already connected.",
+  "GMCONSOLE.Pairing.Title": "GM Console — pair a tablet",
+  "GMCONSOLE.Notify.TokenRejected": "GM Console: the relay rejected this token. Open Tablet pairing and enter the relay's bootstrap code again.",
+  "GMCONSOLE.Notify.NotMaster": "GM Console: this token is a device token, not the master one. Open Tablet pairing and claim a master token.",
+  "GMCONSOLE.Notify.NoToken": "GM Console: the relay URL is set but there is no token yet. Open Tablet pairing to connect.",
+  "GMCONSOLE.Notify.LayoutRejected": "GM Console: a layout sent from the tablet was malformed and was not saved.",
+  "GMCONSOLE.Pairing.Copied": "Copied to clipboard."
+}

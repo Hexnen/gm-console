@@ -1,0 +1,263 @@
+.gm-console-pairing .gmc-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.gm-console-pairing .gmc-pair__qr {
+  align-self: center;
+  width: 200px;
+  padding: 10px;
+  background: #fff;      /* QR contrast does not survive a dark surface */
+  border-radius: 8px;
+}
+
+.gm-console-pairing .gmc-pair__qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gm-console-pairing .gmc-pair__code {
+  margin: 0;
+  text-align: center;
+  font-family: monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;   /* re-centre against the trailing letter-space */
+}
+
+.gm-console-pairing .gmc-pair__hint {
+  margin: 0;
+  text-align: center;
+  font-size: var(--font-size-12, 0.75rem);
+  opacity: 0.75;
+}
+
+.gm-console-pairing .gmc-pair__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gm-console-pairing .gmc-pair__label { flex: 1; }
+
+.gm-console-pairing .gmc-pair__row .gmc-pair__code {
+  flex: 1;
+}
+
+.gm-console-pairing .gmc-pair__link {
+  flex: 1;
+  font-family: monospace;
+  font-size: var(--font-size-11, 0.7rem);
+}
+
+.gm-console-pairing .gmc-pair__row > button {
+  flex: 0 0 auto;
+  width: 2.2rem;
+}
+
+.gm-console-pairing .gmc-pair__bootstrap {
+  flex: 1;
+  text-align: center;
+  font-family: monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+}
+
+.gm-console-pairing h3 {
+  margin: 0;
+  font-size: var(--font-size-14, 0.9rem);
+}
+
+.gm-console-pairing .gmc-pair__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.gm-console-pairing .gmc-pair__devices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gm-console-pairing .gmc-pair__devices li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gm-console-pairing .gmc-pair__name { flex: 1; }
+
+.gm-console-pairing .gmc-pair__id {
+  font-family: monospace;
+  font-size: var(--font-size-11, 0.7rem);
+  opacity: 0.6;
+}
+
+.gm-console-pairing .gmc-pair__devices button {
+  flex: 0 0 auto;
+  width: 2rem;
+}
+
+/* A viewer code is the one handed to a player; make the QR itself say so, since
+   that is what gets scanned and the label above it does not travel with it. */
+.gm-console-pairing .gmc-pair__qr.is-viewer {
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.gm-console-pairing .gmc-pair__role {
+  flex: 0 0 auto;
+  width: auto;
+  font-size: var(--font-size-12, 0.75rem);
+}
+
+/* The pairing select is the one choice in its row, so let it take the space. */
+.gm-console-pairing .gmc-pair__row > .gmc-pair__role { flex: 1; }
+
+/* A tablet that cannot fire reads differently from one that can. */
+.gm-console-pairing .gmc-pair__devices li.is-viewer .gmc-pair__name { opacity: 0.75; }
+
+/* -------------------------------------------- */
+/*  Action log                                  */
+/* -------------------------------------------- */
+
+.gm-console-pairing .gmc-pair__log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  font-size: var(--font-size-12, 0.75rem);
+}
+
+.gm-console-pairing .gmc-pair__log li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+}
+
+/* Verdict by colour *and* by the word next to it: colour alone is not a label. */
+.gm-console-pairing .gmc-pair__log li.is-fail {
+  border-left-color: var(--color-level-error, #a33);
+  background: color-mix(in srgb, var(--color-level-error, #a33) 8%, transparent);
+}
+
+.gm-console-pairing .gmc-pair__log li.is-pending { border-left-color: var(--color-level-warning, #b80); }
+.gm-console-pairing .gmc-pair__log li.is-info { opacity: 0.7; }
+
+/* Fixed column so the rows line up and the eye can scan straight down. */
+.gm-console-pairing .gmc-pair__when {
+  flex: 0 0 6.5rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gm-console-pairing .gmc-pair__who {
+  flex: 0 0 6rem;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The macro is what the row is about, so it gets whatever is left. */
+.gm-console-pairing .gmc-pair__what {
+  flex: 1 1 6rem;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gm-console-pairing .gmc-pair__verdict {
+  flex: 0 0 auto;
+  font-variant: small-caps;
+  opacity: 0.85;
+}
+
+.gm-console-pairing .gmc-pair__ms {
+  flex: 0 0 auto;
+  font-family: monospace;
+  font-size: var(--font-size-11, 0.7rem);
+  opacity: 0.6;
+}
+
+/* Wraps onto its own line under the row it explains. */
+.gm-console-pairing .gmc-pair__why {
+  flex: 1 0 100%;
+  margin: 0 0 0 6.5rem;
+  font-size: var(--font-size-11, 0.7rem);
+  opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------------------- */
+/*  Boards                                      */
+/* -------------------------------------------- */
+
+.gm-console-pairing .gmc-pair__boards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gm-console-pairing .gmc-pair__boards li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* The board actually being served. currentColor keeps it legible on whichever
+   sheet colour the active theme paints behind it. */
+.gm-console-pairing .gmc-pair__boards li.is-active {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  box-shadow: inset 2px 0 0 currentColor;
+}
+
+.gm-console-pairing .gmc-pair__boards button {
+  flex: 0 0 auto;
+  width: 2rem;
+}
+
+.gm-console-pairing .gmc-pair__actions {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.gm-console-pairing .gmc-pair__json {
+  width: 100%;
+  margin: 0.35rem 0;
+  font-family: monospace;
+  font-size: var(--font-size-11, 0.7rem);
+  resize: vertical;
+}
+
+/* Shown inside a DialogV2, which is outside this application's element. */
+.gmc-pair__changes {
+  margin: 0.35rem 0;
+  padding-left: 1.2rem;
+  font-size: var(--font-size-12, 0.75rem);
+}

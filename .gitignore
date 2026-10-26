@@ -1,0 +1,12 @@
+node_modules/
+*.log
+.DS_Store
+*.bak
+image2api.*
+secrets.json
+Zrzut*
+images.jpg
+art/
+fonts/
+relay/secrets.json
+

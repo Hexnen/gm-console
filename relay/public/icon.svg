@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  GM Console app icon.
+
+  Declared "any maskable", so it has to survive both treatments at once:
+  - "any": drawn as-is, edge to edge.
+  - "maskable": the platform crops it to its own shape (circle, squircle, …)
+    and only the central circle of 80% diameter is guaranteed to survive.
+
+  Hence the full-bleed background rect and the artwork kept inside a ~60% box:
+  nothing meaningful is near an edge, so any crop still reads as four pads.
+  SVG rather than PNG because the relay has no build step and no image library —
+  see relay/README.md for the iOS consequence.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="GM Console">
+  <title>GM Console</title>
+
+  <!-- Full bleed: a maskable icon must have no transparent margin, or the
+       platform's own shape shows the page through the corners. Matches the
+       page background and the manifest theme/background colour. -->
+  <rect width="512" height="512" fill="#0a0a0c"/>
+
+  <!-- A very soft warm wash, so the tile is not a flat black square next to
+       other icons. Kept subtle enough to survive aggressive icon downscaling. -->
+  <defs>
+    <radialGradient id="wash" cx="50%" cy="34%" r="72%">
+      <stop offset="0%" stop-color="#d4a24c" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#d4a24c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#wash)"/>
+
+  <!-- Four macro pads, the one thing the console actually is. The group spans
+       144..368 (44% of the canvas, centred), comfortably inside the maskable
+       safe circle even after a circular crop. -->
+  <g fill="#d4a24c">
+    <rect x="144" y="144" width="98" height="98" rx="24"/>
+    <rect x="270" y="144" width="98" height="98" rx="24" opacity="0.72"/>
+    <rect x="144" y="270" width="98" height="98" rx="24" opacity="0.72"/>
+    <!-- The "pressed" pad, in the accent at full strength plus a rim, echoing
+         the tile-hit state on the board. -->
+    <rect x="270" y="270" width="98" height="98" rx="24"/>
+  </g>
+  <rect x="270" y="270" width="98" height="98" rx="24" fill="none"
+        stroke="#ffffff" stroke-opacity="0.5" stroke-width="6"/>
+</svg>
