@@ -3,6 +3,14 @@
   flex-direction: column;
   gap: 0.6rem;
   padding: 0.5rem 0.25rem;
+  /* Foundry caps .application at 100vh minus the hotbar and gives .window-content
+     overflow: hidden, so a connected window (QR, devices, log, boards, backup) is
+     taller than most screens and its lower half was cut off with no way to reach
+     it. Scroll the part instead; min-height: 0 lets it shrink inside the flex
+     column so the scrollbar appears at all. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .gm-console-pairing .gmc-pair__qr {

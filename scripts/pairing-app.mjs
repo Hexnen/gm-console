@@ -218,7 +218,9 @@ export class PairingApp extends HandlebarsApplicationMixin(ApplicationV2) {
   };
 
   static PARTS = {
-    main: { template: "modules/gm-console/templates/pairing.hbs" }
+    // The part root is the window's scroller (see .gmc-pair in the CSS), so its
+    // offset survives the re-render every button triggers.
+    main: { template: "modules/gm-console/templates/pairing.hbs", scrollable: [""] }
   };
 
   /**
