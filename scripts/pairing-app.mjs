@@ -1155,6 +1155,42 @@ export class PairingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     this.render();
   }
 
+  /**
+   * Every render replaces the part's DOM, and Foundry carries over only focus,
+   * scroll and (v14) `details[data-sync]` — never what was typed. A failed paste
+   * import, a failed bootstrap claim or a device-list push from the relay used
+   * to wipe the pasted JSON or the typed code and fold its <details> shut, right
+   * under the error that asked the GM to fix it. Carry both over by hand.
+   * @inheritDoc
+   */
+  _preSyncPartState(partId, newElement, priorElement, state) {
+    super._preSyncPartState(partId, newElement, priorElement, state);
+    state.gmcFields = {};
+    for ( const field of priorElement.querySelectorAll("textarea[name=boardsJson], input[name=bootstrap]") ) {
+      state.gmcFields[field.name] = field.value;
+    }
+    state.gmcDetails = {};
+    for ( const details of priorElement.querySelectorAll("details[data-gmc-sync]") ) {
+      state.gmcDetails[details.dataset.gmcSync] = details.open;
+    }
+  }
+
+  /** @inheritDoc */
+  _syncPartState(partId, newElement, priorElement, state) {
+    // Before super: it restores the scroll offset, and an open <details> near
+    // the bottom must already be open, or the offset is clamped to a page that
+    // is still short.
+    for ( const [name, value] of Object.entries(state.gmcFields ?? {}) ) {
+      const field = newElement.querySelector(`[name="${name}"]`);
+      if ( field && !field.readOnly ) field.value = value;
+    }
+    for ( const [id, open] of Object.entries(state.gmcDetails ?? {}) ) {
+      const details = newElement.querySelector(`details[data-gmc-sync="${id}"]`);
+      if ( details ) details.open = open;
+    }
+    super._syncPartState(partId, newElement, priorElement, state);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     // The relay pushes the device list over the GM stream; mirror it here.
