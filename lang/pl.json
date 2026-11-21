@@ -11,5 +11,6 @@
   "GMCONSOLE.Notify.NotMaster": "GM Console: to token urządzenia, nie token główny. Otwórz Parowanie tabletu i pobierz token główny.",
   "GMCONSOLE.Notify.NoToken": "GM Console: adres relaya jest ustawiony, ale nie ma jeszcze tokenu. Otwórz Parowanie tabletu, żeby się połączyć.",
   "GMCONSOLE.Notify.LayoutRejected": "GM Console: układ przysłany z tabletu był nieprawidłowy i nie został zapisany.",
+  "GMCONSOLE.Notify.Unconfigured": "GM Console: ta przeglądarka nie ma ustawionego adresu relaya, więc nic tu nie jest publikowane — tablet może nadal pokazywać starą zawartość. Ustawienia są osobne dla każdej przeglądarki: wpisz adres relaya w ustawieniach modułu.",
   "GMCONSOLE.Pairing.Copied": "Skopiowano do schowka."
 }

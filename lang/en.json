@@ -11,5 +11,6 @@
   "GMCONSOLE.Notify.NotMaster": "GM Console: this token is a device token, not the master one. Open Tablet pairing and claim a master token.",
   "GMCONSOLE.Notify.NoToken": "GM Console: the relay URL is set but there is no token yet. Open Tablet pairing to connect.",
   "GMCONSOLE.Notify.LayoutRejected": "GM Console: a layout sent from the tablet was malformed and was not saved.",
+  "GMCONSOLE.Notify.Unconfigured": "GM Console: this browser has no relay URL set, so nothing is published from here — the tablet may still show old content. Settings are per browser: enter the relay URL in the module settings.",
   "GMCONSOLE.Pairing.Copied": "Copied to clipboard."
 }

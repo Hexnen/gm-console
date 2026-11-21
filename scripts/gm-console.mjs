@@ -2765,14 +2765,7 @@ function announceLink() {
   if ( state === announcedLink ) return;
   announcedLink = state;
   if ( state === "unpaired" ) ui.notifications.info(game.i18n.localize("GMCONSOLE.Notify.NoToken"));
-  else if ( state === "unconfigured" ) {
-    // Not localised through lang/: this string is new and the language files are
-    // not this module's to extend from here. Same Polish as every other message
-    // the console writes to the GM.
-    ui.notifications.warn("GM Console: ta przeglądarka nie ma ustawionego adresu relaya, więc nic tu nie jest"
-      + " publikowane — tablet może nadal pokazywać starą zawartość. Ustawienia są osobne dla każdej"
-      + " przeglądarki: wpisz adres relaya w ustawieniach modułu.");
-  }
+  else if ( state === "unconfigured" ) ui.notifications.warn(game.i18n.localize("GMCONSOLE.Notify.Unconfigured"));
 }
 
 /**
@@ -3007,7 +3000,18 @@ async function sendState(force) {
   // and the alternative is every future caller of pushState(true) having to
   // remember which slice it invalidated.
   if ( force ) slices.clear();
-  const state = buildState();
+  // A throw here (an unreadable board flag, a system whose combatant getters
+  // throw) used to reject this promise, and
+  // every caller fires pushState without awaiting it (the debounce timer, the
+  // stream's open and sync handlers), so it surfaced only as an unhandled
+  // rejection. Say what failed and leave the fingerprint alone.
+  let state;
+  try {
+    state = buildState();
+  } catch ( err ) {
+    console.error(`${MODULE_ID} | could not build the console state`, err);
+    return;
+  }
   // updatedAt always differs, so compare everything else. Computed before `seq` and
   // `gen` go on: those change on every push by design and would make every
   // fingerprint unique, which is the comparison this exists to make possible.
@@ -3125,7 +3129,18 @@ function connect() {
 
   es.addEventListener("fire", event => {
     const data = parse(event);
-    if ( data ) executeMacro(String(data.reqId), unpackFire(data));
+    if ( !data ) return;
+    const reqId = String(data.reqId);
+    // executeMacro answers every refusal and every macro failure itself, but the
+    // reads before its own try (the active board, the params) can still throw on a
+    // corrupted flag or a system mid-migration. Uncaught, that is an unhandled
+    // rejection here and a tablet left waiting out the relay's five-minute TTL.
+    Promise.resolve()
+      .then(() => executeMacro(reqId, unpackFire(data)))
+      .catch(err => {
+        console.error(`${MODULE_ID} | a fire request could not be handled`, err);
+        postResult(reqId, { ok: false, text: String(err?.message ?? err) });
+      });
   });
 
   // Latency probe: answer immediately, run nothing.
