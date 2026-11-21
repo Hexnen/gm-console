@@ -19,6 +19,7 @@ import {
   describeChanges,
   readActiveBoard,
   readBackup,
+  readBackupHistory,
   readCollection,
   restoreBackup,
   sanitizeCollection,
@@ -1080,7 +1081,14 @@ export class PairingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     if ( !ok ) return;
     this.#error = this.#notice = "";
     try {
-      await restoreBackup();
+      // The history may have moved while the dialog was up: a tablet save pushes
+      // a new entry onto its head, and restoring "index 0" would then put back a
+      // snapshot the GM was never shown. Restore the one they confirmed.
+      const index = readBackupHistory().findIndex(entry => (entry.at === backup.at)
+        && (JSON.stringify(entry.data) === JSON.stringify(backup.data)));
+      if ( (index < 0) || !(await restoreBackup(index)) ) {
+        throw new Error("ta kopia zniknęła z historii w międzyczasie");
+      }
       republish();
       this.#notice = "Przywrócono poprzedni układ plansz.";
     } catch ( err ) {
