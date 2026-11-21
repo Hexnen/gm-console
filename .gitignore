@@ -10,3 +10,5 @@ art/
 fonts/
 relay/secrets.json
 
+relay/devices.json
+relay/action-log.jsonl
