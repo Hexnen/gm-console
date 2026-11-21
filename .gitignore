@@ -12,3 +12,4 @@ relay/secrets.json
 
 relay/devices.json
 relay/action-log.jsonl
+relay/bootstrap-code.txt
