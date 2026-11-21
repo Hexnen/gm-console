@@ -13,6 +13,15 @@
   overflow-y: auto;
 }
 
+/* Once .gmc-pair has a capped height, its flex children would shrink to fit it
+   before it scrolls. Most cannot go below their content, but a scroll container
+   can shrink to nothing: the action log (overflow-y: auto) collapsed to a sliver
+   or vanished on a short screen. Keep every child at its natural height so the
+   part scrolls instead. */
+.gm-console-pairing .gmc-pair > * {
+  flex-shrink: 0;
+}
+
 .gm-console-pairing .gmc-pair__qr {
   align-self: center;
   width: 200px;
