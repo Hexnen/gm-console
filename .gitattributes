@@ -1,0 +1,4 @@
+relay/devices.json export-ignore
+relay/action-log.jsonl export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
