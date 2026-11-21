@@ -385,6 +385,18 @@ Hooks.once("ready", () => {
     }
   }
 
+  // Which encounter `game.combat` names is not a document field: it is the
+  // tracker's `viewed`, reassigned inside every tracker render
+  // (client/applications/sidebar/tabs/combat-tracker.mjs:105-113). The GM cycling
+  // encounters in the sidebar changes it with no document hook at all, and the
+  // tablet kept showing the old fight while every tap on it was refused by
+  // requestedCombat as "no longer running". Republish only when the viewed
+  // encounter actually differs from the one last published, so the tracker's
+  // frequent ordinary renders cost nothing.
+  Hooks.on("renderCombatTracker", () => {
+    if ( (currentCombat()?.id ?? null) !== publishedCombatId ) schedulePush("combat");
+  });
+
   // Hit points live on the Actor, so this is the hook that carries damage — and
   // it carries it for an unlinked token too, since ActorDelta#_onUpdate re-emits
   // it for the synthetic actor (client/documents/actor-delta.mjs:225). It fires
@@ -1077,6 +1089,14 @@ function readConditions(actor) {
 }
 
 /**
+ * The id of the encounter the combat slice was last built from (null for none),
+ * so a tracker render can tell whether `game.combat` moved. `undefined` until the
+ * first build, which makes the first render after load always republish.
+ * @type {string|null|undefined}
+ */
+let publishedCombatId;
+
+/**
  * The encounter this console is willing to talk about, or null.
  *
  * `game.combat` is the tracker's *viewed* encounter, falling back to the active one
@@ -1152,6 +1172,7 @@ function effectActor(effect) {
  */
 function buildCombat() {
   const combat = currentCombat();
+  publishedCombatId = combat?.id ?? null;
   if ( !canControlCombat(combat) ) return {};
 
   const turns = [];
