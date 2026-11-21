@@ -1196,10 +1196,7 @@ export class PairingApp extends HandlebarsApplicationMixin(ApplicationV2) {
   _onRender(context, options) {
     super._onRender(context, options);
     // The relay pushes the device list over the GM stream; mirror it here.
-    this._deviceHook ??= Hooks.on("gmConsoleDevices", devices => {
-      this.#devices = devices;
-      if ( this.rendered ) this.render();
-    });
+    this._deviceHook ??= Hooks.on("gmConsoleDevices", devices => this.#onDevices(devices));
     // A hidden file input cannot be driven by a data-action, which only ever
     // yields a click. Re-bound every render because Handlebars parts replace
     // their DOM; the listener reference is stable, so re-binding the same node
@@ -1209,6 +1206,31 @@ export class PairingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     // Delegated on the frame, which survives part re-renders, so the per-device
     // selects that Handlebars rebuilds each time need no binding of their own.
     this.element?.addEventListener("change", this.#onSelectChange);
+  }
+
+  /**
+   * A device list pushed by the relay (GM connect, pair, revoke, role change).
+   *
+   * A pairing code is single use (relay/server.mjs, /api/pair/claim), so once a
+   * tablet has claimed the one on screen the QR and the "this code pairs a tablet
+   * as …" line describe a code that no longer exists. Pairing the next tablet from
+   * it failed with "invalid or expired code" and counted towards the relay's
+   * per-IP claim lockout. A device id this window has not seen before is that
+   * claim, so mint the next code for the same role before repainting.
+   * @param {object[]} devices
+   */
+  async #onDevices(devices) {
+    const list = Array.isArray(devices) ? devices : [];
+    const known = new Set(this.#devices.map(d => d?.id));
+    const claimed = !!this.#pairing && list.some(d => !known.has(d?.id));
+    this.#devices = list;
+    if ( claimed ) {
+      // #refresh clears the error line; keep one that is about something else.
+      const error = this.#error;
+      await this.#refresh();
+      if ( !this.#error ) this.#error = error;
+    }
+    if ( this.rendered ) this.render();
   }
 
   async close(options) {
