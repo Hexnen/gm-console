@@ -340,7 +340,9 @@ Hooks.once("ready", () => {
   // actually published, because a Scene document is written for reasons that have
   // nothing to do with any of them.
   Hooks.on("createScene", () => schedulePush("scenes"));
-  Hooks.on("deleteScene", () => schedulePush("scenes"));
+  // "board" as well: a deleted scene's board keeps its key, and its label falls
+  // back from the scene's name to the stored one (boardLabel).
+  Hooks.on("deleteScene", () => schedulePush("scenes", "board"));
 
   // Which board is active follows the scene, so republish when that changes.
   //
@@ -477,6 +479,10 @@ Hooks.once("ready", () => {
     // does which encounter is in front of the GM: game.combats.combats is filtered
     // to the current scene (client/documents/collections/combat-encounters.mjs:45).
     if ( "active" in changed ) return schedulePush("board", "scenes", "combat");
+    // A scene board is labelled with the scene's current name (boardLabel), both
+    // in the tablet's header and in its board list, so a rename has to rebuild the
+    // board slice too or the tablet keeps the old name until something else moves.
+    if ( "name" in changed ) return schedulePush("scenes", "board");
     // Everything else the scene list publishes. A token move, a fog update or a
     // lighting tweak writes the Scene document too and must not cost every paired
     // tablet a state frame.
