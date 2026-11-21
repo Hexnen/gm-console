@@ -912,6 +912,10 @@ export class PairingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const id = target.closest("[data-device-id]")?.dataset.deviceId;
     const cfg = relayConfig();
     if ( !id || !cfg?.token ) return;
+    // Cleared first, like every other action here: a retry that succeeds after a
+    // failed attempt otherwise keeps "Nie udało się odłączyć" on screen next to a
+    // device list that no longer has the tablet in it.
+    this.#error = this.#notice = "";
     try {
       const res = await fetch(`${cfg.base}/api/devices/revoke?token=${encodeURIComponent(cfg.token)}`, {
         method: "POST",
