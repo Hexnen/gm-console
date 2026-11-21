@@ -666,7 +666,15 @@ function failPendingFor(gmRes, why) {
     // difference between "the macro did nothing" and "the macro never ran".
     if ( !p.probe ) logEvent({ event: "dropped", ...p.actor, macroId: p.macroId, ok: false, ms: now - p.at });
     const targets = [...pads].filter(([, q]) => q.token === p.token).map(([r]) => r);
-    emit(targets, "result", { reqId: p.clientReqId, ok: false, error: `the GM stream was dropped: ${why}` });
+    // `text` is the field the tablet actually shows (relay/public/index.html, the
+    // result handler and takeSave/takeFlushed read only `text`); `error` alone
+    // reached the user as a bare "błąd" with no hint that the link had dropped.
+    emit(targets, "result", {
+      reqId: p.clientReqId,
+      ok: false,
+      text: "Połączenie z Foundry zerwane — nie wiadomo, czy to dotarło",
+      error: `the GM stream was dropped: ${why}`
+    });
   }
 }
 
