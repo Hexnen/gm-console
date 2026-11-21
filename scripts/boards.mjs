@@ -118,7 +118,7 @@ export function boundedString(value, fallback, max) {
  * @returns {string}
  */
 export function sanitizeKey(key, fallback) {
-  const text = boundedString(key, fallback, MAX_KEY).trim().replace(/\./g, "_").replace(/^[-=]=/, "");
+  const text = boundedString(key, fallback, MAX_KEY).trim().replace(/\./g, "_").replace(/^(?:[-=]=)+/, "");
   return text || fallback;
 }
 
