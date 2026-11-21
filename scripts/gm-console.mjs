@@ -1023,12 +1023,23 @@ function readVitals(combat, combatant) {
  * id (client/config.mjs:1686-1734), which means `CONFIG.statusEffects[x]` for a
  * hostile `x` of "constructor" hands back Array itself. Nothing here indexes it:
  * a requested id is matched by scanning, so an id that names no status finds none.
+ *
+ * foundry.utils.iterateValues arrived in v14 together with that Proxy (the Token
+ * HUD switched to it at the same time, client/applications/hud/token-hud.mjs:96).
+ * The manifest still declares v13, where it does not exist and CONFIG.statusEffects
+ * is a plain array: calling it there threw inside the try below, the catalogue came
+ * back empty, and every condition toggle was refused as unknown. Object.values is
+ * the v13 equivalent and is only reached when the helper is missing.
  * @returns {object[]}
  */
 function statusCatalogue() {
   const out = [];
   try {
-    for ( const status of foundry.utils.iterateValues(CONFIG.statusEffects) ) {
+    const source = CONFIG.statusEffects ?? [];
+    const values = (typeof foundry.utils.iterateValues === "function")
+      ? foundry.utils.iterateValues(source)
+      : Object.values(source);
+    for ( const status of values ) {
       // `length` rides along in that iteration; a real entry always has an id.
       if ( status?.id ) out.push(status);
     }
