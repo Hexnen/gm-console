@@ -1523,20 +1523,33 @@ function buildFeed(secrets = false) {
   return { feed };
 }
 
+/** The last collator built, with the language it was built for. */
+let collatorCache = null;
+
 /**
  * Sort in the language actually in use (game.i18n.lang, set by
  * client/helpers/localization.mjs:223) rather than a hardcoded "pl". The fallback
  * is not paranoia about Foundry's own tags but about a translation module
  * registering a malformed one: Intl throws on those, and a throw here would take
  * down every state push.
+ *
+ * Cached per language. Every caller passes this to Array#sort as
+ * `(a, b) => collator().compare(...)`, so it runs once per *comparison*, and
+ * building an ICU collator is far from free: a three-hundred-macro library cost
+ * ~2,500 constructions, about 10 ms on each library rebuild instead of ~0.2 ms.
  * @returns {Intl.Collator}
  */
 function collator() {
+  const lang = game.i18n?.lang;
+  if ( collatorCache?.lang === lang ) return collatorCache.collator;
+  let made;
   try {
-    return new Intl.Collator(game.i18n.lang);
+    made = new Intl.Collator(lang);
   } catch {
-    return new Intl.Collator();
+    made = new Intl.Collator();
   }
+  collatorCache = { lang, collator: made };
+  return made;
 }
 
 /** The board the tablet renders, and which of the GM's boards it is. */
