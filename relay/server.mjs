@@ -195,24 +195,33 @@ let saveChain = Promise.resolve();
  * @param {string} file
  * @param {string} data
  * @param {string} what  Human label for the warning if it fails.
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>}  Whether the file now holds `data`. Never rejects,
+ *   so the chain behind it keeps moving; a caller that cannot afford an unsaved
+ *   change (rotating the master token) reads this instead.
  */
 function saveAtomic(file, data, what) {
-  saveChain = saveChain.then(async () => {
+  const run = saveChain.then(async () => {
     const tmp = `${file}.${process.pid}.tmp`;
     try {
       await writeFile(tmp, data);
       await rename(tmp, file);
+      return true;
     } catch ( err ) {
       console.warn(`[gm-console] could not persist ${what}:`, err.message);
       await unlink(tmp).catch(() => {});
+      return false;
     }
   });
-  return saveChain;
+  saveChain = run;
+  return run;
 }
 
-function saveSecrets() {
-  return saveAtomic(SECRETS_FILE, `${JSON.stringify({ master: TOKEN }, null, 2)}\n`, "the master token");
+/**
+ * @param {string} [master]  The token to store; the live one by default.
+ * @returns {Promise<boolean>}
+ */
+function saveSecrets(master = TOKEN) {
+  return saveAtomic(SECRETS_FILE, `${JSON.stringify({ master }, null, 2)}\n`, "the master token");
 }
 
 /** @type {Set<http.ServerResponse>} */ const gms = new Set();
@@ -1331,8 +1340,16 @@ const server = http.createServer(async (req, res) => {
     if ( ENV_PINNED ) {
       return sendJson(res, 409, { error: "GMC_TOKEN is set in the environment; rotate it there instead" });
     }
-    TOKEN = randomBytes(24).toString("hex");
-    await saveSecrets();
+    // Stored before it is used. The answer hands the new token to the module,
+    // which forgets the old one; if the file still held the old one, the next
+    // relay restart would bring it back and the module's token would be refused
+    // by a relay that is claimed and mints no bootstrap code, with no way back
+    // short of deleting secrets.json by hand. So a failed save keeps the old token.
+    const next = randomBytes(24).toString("hex");
+    if ( !(await saveSecrets(next)) ) {
+      return sendJson(res, 500, { error: "could not save the new master token on the relay; the current one stays valid" });
+    }
+    TOKEN = next;
     console.log("[gm-console] master token rotated");
     // Every GM stream still open is authenticated with the old value; drop them
     // so the module reconnects with the new one instead of lingering half-valid.
